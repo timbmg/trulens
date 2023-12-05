@@ -41,7 +41,7 @@ jobs:
         displayName: Add conda to PATH
       - bash: |
           set -e
-          conda create -y --quiet -n test_conda_env -f ./.azure_pipelines/conda.yaml
+          conda env create -n test_conda_env -f ./.azure_pipelines/conda.yaml
           conda init bash
         displayName: Create Anaconda environment
       - bash: |
