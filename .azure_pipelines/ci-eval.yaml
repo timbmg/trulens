@@ -24,7 +24,7 @@ schedules:
         - main
 
 jobs:
-  - job: "All Tests"
+  - job: "All_Tests"
     pool:
       vmImage: "ubuntu-latest"
     timeoutInMinutes: 30
