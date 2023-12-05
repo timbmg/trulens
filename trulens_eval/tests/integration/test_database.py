@@ -271,7 +271,3 @@ def _populate_data(db: DB):
     )
     _, rec = app.call_with_record("boo")
     return fb, app, rec
-
-
-if __name__ == '__main__':
-    main()

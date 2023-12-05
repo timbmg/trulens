@@ -24,7 +24,7 @@ schedules:
         - main
 
 jobs:
-  - job: quickstartTests
+  - job: "All Tests"
     pool:
       vmImage: "ubuntu-latest"
     timeoutInMinutes: 30
@@ -33,8 +33,6 @@ jobs:
       matrix:
         docs_notebooks:
           condaEnvFileSuffix: "trulens-llm"
-          requirementsFile: "tests/docs_notebooks/requirements.txt"
-          testSubdirectory: "tests/docs_notebooks"
 
     steps:
       - checkout: self
@@ -43,28 +41,29 @@ jobs:
         displayName: Add conda to PATH
       - bash: |
           set -e
-          conda create  -y --quiet -n $(condaEnvFileSuffix) python=3.11
+          conda create -y --quiet -n test_conda_env -f ./.azure_pipelines/conda.yaml
           conda init bash
         displayName: Create Anaconda environment
       - bash: |
           set -e
-          source activate $(condaEnvFileSuffix)
+          source activate test_conda_env
           which python
         displayName: Which Python
       - bash: |
           set -e
-          source activate $(condaEnvFileSuffix)
+          source activate test_conda_env
           cd ./trulens_eval
           pip install -e .
-          pip install -r $(requirementsFile)
-          pip install yapf==0.32.0
-          pip install isort==5.10.1
-          pip install ipykernel
-          python -m ipykernel install --user --name $(condaEnvFileSuffix) --display-name $(condaEnvFileSuffix)
         displayName: Install pip package
       - bash: |
           set -e
-          source activate $(condaEnvFileSuffix)
+          source activate test_conda_env
+          cd ./trulens_eval
+          python -m ipykernel install --user --name test_conda_env --display-name test_conda_env
+        displayName: Install jupyter kernel
+      - bash: |
+          set -e
+          source activate test_conda_env
           echo Using $(yapf --version) isort $(isort --vn)
           ./format.sh --eval
         displayName: Format Code
@@ -78,27 +77,15 @@ jobs:
           fi
         displayName: NoDiffCheck
       - bash: |
-          source activate $(condaEnvFileSuffix)
+          source activate test_conda_env
           cd ./docs/trulens_eval
-          pip install jupyter
-          pip install nbmerge
           ../../.github/workflows/combine_nb_to_docs_testing.sh
         displayName: Run combine docs for testing
       - bash: |
-          source activate $(condaEnvFileSuffix)
-
-          pip install pytest==7.0.1 pytest-azurepipelines 'langchain>=0.0.230' 'llama_index>=0.8.3'
-          pip install html2text==2020.1.16 # requirement for llama_index VectorStoreIndex local Vector DB
-          pip install docarray hnswlib # requirements for HNSW local Vector DB
-          pip install faiss-cpu unstructured # requirements for FAISS local Vector DB
-          pip install 'bert_score>=0.3.13' 'evaluate>=0.4.0' # groundtruth.py
-
-          echo '::group::piplist'
-          echo "$(pip list)"
-          echo '::endgroup::'
+          source activate test_conda_env
           cd ./trulens_eval
-          python -m pytest $(testSubdirectory)
-        displayName: Run notebook tests
+          python -m pytest ./tests
+        displayName: Run tests
         env:
           OPENAI_API_KEY: $(OPENAI_API_KEY)
           HUGGINGFACE_API_KEY: $(HUGGINGFACE_API_KEY)

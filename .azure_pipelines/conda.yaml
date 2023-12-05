@@ -1,0 +1,26 @@
+channels:
+  - defaults
+dependencies:
+  - python=3.11
+  - pip:
+      - bert_score>=0.3.13 # groundtruth.py
+      - chromadb==0.4.18
+      - docarray # requirements for HNSW local Vector DB
+      - evaluate>=0.4.0 # groundtruth.py
+      - faiss-cpu # requirements for FAISS local Vector DB
+      - hnswlib # requirements for HNSW local Vector DB
+      - html2text==2020.1.16 # requirement for llama_index VectorStoreIndex local Vector DB
+      - ipykernel
+      - isort==5.10.1
+      - jinja2==3.0.3
+      - jupyter
+      - langchain>=0.0.230
+      - llama_index>=0.8.3
+      - nbconvert==6.0.7
+      - nbformat==5.0.8
+      - nbmerge
+      - pytest-azurepipelines
+      - pytest==7.0.1
+      - unstructured # requirements for FAISS local Vector DB
+      - yapf==0.32.0
+name: azure_pipelines_conda_env

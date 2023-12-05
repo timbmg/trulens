@@ -310,7 +310,3 @@ class TestProviders(TestCase):
 
     def test_hugs(self):
         pass
-
-
-if __name__ == '__main__':
-    main()
